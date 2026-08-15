@@ -1,4 +1,4 @@
-# Inkpolish API Documentation
+# API Documentation
 
 The Inkpolish API lets Agency accounts score, rewrite, and generate guideline-aligned content
 programmatically — the same three tools available in the Inkpolish dashboard, connected directly
