@@ -1,0 +1,39 @@
+---
+layout: default
+---
+<div class="home">
+  <div class="page-with-toc">
+    <div class="page-main">
+      {{ content }}
+    </div>
+
+    <nav class="page-toc" id="page-toc">
+      <div class="page-toc-title">On this page</div>
+      <ul class="page-toc-list" id="page-toc-list"></ul>
+    </nav>
+  </div>
+
+  {%- if site.posts.size > 0 -%}
+    <h2 class="post-list-heading">{{ page.list_title | default: "Posts" }}</h2>
+    <ul class="post-list">
+      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+      {%- for post in site.posts -%}
+      <li>
+        <span class="post-meta">{{ post.date | date: date_format }}</span>
+        <h3>
+          <a class="post-link" href="{{ post.url | relative_url }}">
+            {{ post.title | escape }}
+          </a>
+        </h3>
+        {%- if site.show_excerpts -%}
+          {{ post.excerpt }}
+        {%- endif -%}
+      </li>
+      {%- endfor -%}
+    </ul>
+
+    <p class="rss-subscribe">subscribe <a href="{{ "/feed.xml" | relative_url }}">via RSS</a></p>
+  {%- endif -%}
+</div>
+
+<script src="{{ "/assets/js/toc.js" | relative_url }}"></script>
