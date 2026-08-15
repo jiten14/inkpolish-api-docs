@@ -6,9 +6,3 @@ description: REST API reference for Inkpolish Agency accounts.
 # marketing layout. No extra setup needed beyond this line; GitHub's
 # own Pages build handles it automatically.
 theme: minima
-
-# Removes the default "Powered by GitHub Pages" footer badge and the
-# built-in RSS/social icon row - not needed for a docs site, and this
-# keeps the page focused.
-minima:
-  social_links: []

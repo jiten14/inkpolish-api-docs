@@ -43,3 +43,20 @@ a:hover {
 .site-footer {
     border-top: 1px solid rgba($brand-pine, 0.15);
 }
+
+.footer-copyright {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba($brand-pine, 0.1);
+    font-size: 0.85rem;
+    color: #6b6b6b;
+}
+
+.site-nav .page-link {
+    color: $brand-pine;
+    font-weight: 600;
+}
+
+.site-nav .page-link:hover {
+    color: $brand-clay;
+}
