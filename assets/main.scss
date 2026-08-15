@@ -6,6 +6,21 @@
 
 @import "minima";
 
+// Widens the overall page - minima's own default .wrapper max-width is
+// only 740px, which the sidebar and main content both have to share,
+// making the actual reading column feel cramped. This is the one
+// change needed to fix that; everything else about the page's
+// structure and styling is untouched.
+.wrapper {
+    max-width: 1100px;
+}
+
+@media screen and (max-width: 1140px) {
+    .wrapper {
+        max-width: calc(100% - 60px);
+    }
+}
+
 // Inkpolish brand colors, matching inkpolish.com's own CSS variables
 // (site-base.css) exactly - not new colors invented for this docs
 // site.
