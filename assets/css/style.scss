@@ -1,0 +1,45 @@
+---
+# The front-matter dashes above are required - they're what tell
+# Jekyll to actually process this file instead of copying it as a
+# plain, un-themed CSS file.
+---
+
+@import "minima";
+
+// Inkpolish brand colors, matching inkpolish.com's own CSS variables
+// (site-base.css) exactly - not new colors invented for this docs
+// site.
+$brand-pine: #1F4B3F;
+$brand-pine-deep: #163830;
+$brand-clay: #C6491D;
+
+// Heading font - Georgia serif, matching the fallback the main site's
+// own Bitter font stack already falls back to when the actual webfont
+// isn't loaded (as it isn't here) - visually consistent with
+// inkpolish.com without needing to self-host font files in this repo
+// too.
+h1, h2, h3, .site-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    color: $brand-pine;
+}
+
+.site-title {
+    font-weight: 700;
+}
+
+.site-header {
+    border-top: 4px solid $brand-pine;
+    border-bottom: 1px solid rgba($brand-pine, 0.15);
+}
+
+a {
+    color: $brand-pine;
+}
+
+a:hover {
+    color: $brand-clay;
+}
+
+.site-footer {
+    border-top: 1px solid rgba($brand-pine, 0.15);
+}
