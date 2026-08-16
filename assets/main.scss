@@ -184,12 +184,41 @@ table {
     -webkit-overflow-scrolling: touch;
 }
 
+// Ensures padding is INCLUDED in an element's declared width rather
+// than added on top of it - the browser's own default (content-box)
+// does the opposite, and is a very common, easy-to-miss cause of
+// horizontal mobile overflow: an element sized to 100% width plus its
+// own padding ends up wider than its container without this.
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+// Explicit overflow handling for code blocks (the curl/JSON examples
+// throughout the README) - a long unbroken line (a full curl command
+// with flags, for instance) needs to scroll within its own block
+// rather than force the page itself wider than the screen.
+pre {
+    overflow-x: auto;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+code {
+    overflow-wrap: break-word;
+}
+
+pre code {
+    white-space: pre;
+    overflow-wrap: normal;
+}
+
 // Safety net for any long, unbroken string (a full URL inside inline
 // code, for example) appearing in normal paragraph text outside a
 // table or code block - lets it wrap instead of forcing the whole page
 // wider than the screen.
 .page-main {
     overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 @media (max-width: 900px) {
