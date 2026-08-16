@@ -170,6 +170,28 @@ a:hover {
     font-size: 0.8rem;
 }
 
+// Tables (used throughout the API endpoint/request-response reference
+// tables) have no built-in horizontal scroll in minima's own default
+// CSS - a table with several columns just overflows the mobile
+// viewport instead of fitting it. display:block lets a <table> scroll
+// horizontally within itself when its content needs more room than the
+// screen has, without needing an extra wrapper element around every
+// table in the README's own markdown.
+table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+// Safety net for any long, unbroken string (a full URL inside inline
+// code, for example) appearing in normal paragraph text outside a
+// table or code block - lets it wrap instead of forcing the whole page
+// wider than the screen.
+.page-main {
+    overflow-wrap: break-word;
+}
+
 @media (max-width: 900px) {
     .page-with-toc {
         flex-direction: column;
@@ -178,5 +200,13 @@ a:hover {
     .page-toc {
         position: static;
         width: 100%;
+        // Moves the sidebar TOC above the main content specifically on
+        // mobile - .page-toc follows .page-main in the actual HTML, so
+        // without this it would stack below by default DOM order.
+        // order only affects layout, not the DOM itself, and only
+        // applies within this flex container - header and footer are
+        // untouched.
+        order: -1;
+        margin-bottom: 1.5rem;
     }
 }
