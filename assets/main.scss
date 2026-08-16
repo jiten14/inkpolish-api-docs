@@ -173,14 +173,16 @@ a:hover {
 // Tables (used throughout the API endpoint/request-response reference
 // tables) have no built-in horizontal scroll in minima's own default
 // CSS - a table with several columns just overflows the mobile
-// viewport instead of fitting it. display:block lets a <table> scroll
-// horizontally within itself when its content needs more room than the
-// screen has, without needing an extra wrapper element around every
-// table in the README's own markdown.
+// viewport instead of fitting it. display:block + overflow-x:auto lets
+// a <table> scroll horizontally within itself ONLY when a cell truly
+// can't wrap (a long unbroken code value, for instance) - deliberately
+// NOT forcing white-space:nowrap here, since that's inherited by every
+// cell and would stop normal sentences (like the Description column's
+// full-sentence text) from wrapping naturally, which is what was
+// actually blowing the tables wide on mobile in the first place.
 table {
     display: block;
     overflow-x: auto;
-    white-space: nowrap;
     -webkit-overflow-scrolling: touch;
 }
 
