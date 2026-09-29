@@ -14,13 +14,12 @@ All requests must be made over HTTPS. Requests to plain HTTP will fail.
 
 ## Who this is for
 
-The Inkpolish API is available to every Inkpolish account type that uses the three tools:
+The Inkpolish API is available to these Inkpolish accounts:
 
 | Account type | API access | Credits used by the API |
 |---|---|---|
 | **Individual** | While your subscription is active | Your monthly subscription credits — the same allowance as your dashboard |
-| **Agency** | Always | Your credit balance — the same balance as your dashboard |
-| **Affiliate** | Always | Your credit balance — the same balance as your dashboard |
+| **Affiliate** | Always | Your affiliate credit balance — the same balance as your dashboard |
 
 Your account type decides only **where the credits come from** and a few response fields (see
 [Credits & Usage](#credits--usage)). Every endpoint, request, and rate limit works the same way
@@ -142,16 +141,17 @@ Inkpolish has two credit models. Your account type decides which one you're on:
 - **Subscription credits (Individual accounts).** Your subscription includes a fixed allowance for
   each billing cycle, shared between your dashboard and the API. It refreshes when your
   subscription renews. Unused credits don't carry over, and there are no separate top-ups.
-- **Credit balance (Agency and Affiliate accounts).** An ongoing balance with no cycle. It's made
-  up of *purchased* credits, which never expire, and — on some accounts — *promotional* credits,
-  which expire on the date shown in `promotional_expires_at`. Promotional credits are always used
-  first.
+- **Credit balance (Affiliate accounts).** An ongoing balance with no cycle, made up of the credits
+  Inkpolish grants to your affiliate account. They never expire and are reported as
+  `purchased_credits` (even though you don't pay for them). The balance also includes
+  `promotional_credits` and `promotional_expires_at` fields, which are always `0` and `null` on an
+  affiliate account.
 
 Because the two models are different, the `credits_remaining` block (returned by every action
 endpoint), `/balance`, and `/transactions` each have **one shape per credit model**. Both shapes
 are documented below — check the fields to see which one you're receiving.
 
-**Subscription credits — `credits_remaining`**
+**Subscription credits (Individual) — `credits_remaining`**
 
 ```json
 "credits_remaining": {
@@ -162,7 +162,7 @@ are documented below — check the fields to see which one you're receiving.
 }
 ```
 
-**Credit balance — `credits_remaining`**
+**Credit balance (Affiliate) — `credits_remaining`**
 
 ```json
 "credits_remaining": {
@@ -214,8 +214,9 @@ History covers everything you've run on your account — from the dashboard and 
 
 ## Request & Response Details
 
-In the examples below, `credits_remaining` is shown in the credit-balance shape. Individual
-accounts receive the subscription-credits shape instead (see [Credits & Usage](#credits--usage)).
+In the examples below, `credits_remaining` is shown in the subscription-credits shape (Individual
+accounts). Affiliate accounts receive the credit-balance shape instead (see
+[Credits & Usage](#credits--usage)).
 
 ### `POST /check`
 
@@ -243,9 +244,10 @@ Inkpolish to fetch and score isn't currently supported via the API.**
     "fixes": ["..."]
   },
   "credits_remaining": {
-    "promotional_credits": 0,
-    "purchased_credits": 238,
-    "total_credits": 238
+    "credits": 100,
+    "credits_used": 42,
+    "credits_remaining": 58,
+    "cycle_end": "2026-10-29"
   }
 }
 ```
@@ -275,9 +277,10 @@ Like `/check`, this endpoint accepts text content only, not a URL.
     "created_at": "2026-08-15T10:00:00.000000Z"
   },
   "credits_remaining": {
-    "promotional_credits": 0,
-    "purchased_credits": 236,
-    "total_credits": 236
+    "credits": 100,
+    "credits_used": 44,
+    "credits_remaining": 56,
+    "cycle_end": "2026-10-29"
   }
 }
 ```
@@ -308,9 +311,10 @@ Generates a guideline-aligned prompt for content you haven't written yet.
     "created_at": "2026-08-15T10:00:00.000000Z"
   },
   "credits_remaining": {
-    "promotional_credits": 0,
-    "purchased_credits": 235,
-    "total_credits": 235
+    "credits": 100,
+    "credits_used": 45,
+    "credits_remaining": 55,
+    "cycle_end": "2026-10-29"
   }
 }
 ```
@@ -335,20 +339,18 @@ Subscription credits (Individual accounts):
 
 If there's no active billing cycle, the counts are `0` and both dates are `null`.
 
-Credit balance (Agency and Affiliate accounts):
+Credit balance (Affiliate accounts):
 
 ```json
 {
   "data": {
-    "promotional_credits": 10,
-    "purchased_credits": 240,
-    "total_credits": 250,
-    "promotional_expires_at": "2026-08-22T10:00:00.000000Z"
+    "promotional_credits": 0,
+    "purchased_credits": 64,
+    "total_credits": 64,
+    "promotional_expires_at": null
   }
 }
 ```
-
-`promotional_expires_at` is `null` when there are no promotional credits on the account.
 
 ### `GET /transactions`
 
@@ -368,21 +370,22 @@ and Prompt you've run, from the dashboard or the API. Each record:
 Your one free Score Check (the one available before subscribing) never used a credit, so it isn't
 listed here.
 
-**Credit balance (Agency and Affiliate accounts)** — a full credit ledger. Each record:
+**Credit balance (Affiliate accounts)** — a full credit ledger: every grant to your account and
+every action that used credits. Each record:
 
 | Field | Type | Notes |
 |---|---|---|
 | `id` | integer | |
 | `user_id` | integer | Your account ID |
-| `type` | string | One of: `grant_promotional`, `grant_purchased`, `consume`, `refund`, `adjustment`, `expire` |
-| `source` | string | `promotional` or `purchased` |
+| `type` | string | `grant_purchased` for credits granted to your account, `consume` for credits used by an action; `refund`, `adjustment`, `grant_promotional`, and `expire` are rare and only appear on a correction made by the Inkpolish team |
+| `source` | string | Always `purchased` on an affiliate account (`promotional` is reserved) |
 | `amount` | integer | |
 | `promotional_balance_after` | integer | Promotional balance immediately after this transaction |
 | `purchased_balance_after` | integer | Purchased balance immediately after this transaction |
 | `feature` | string, nullable | `check`, `rewrite`, or `prompt` on usage transactions; `null` otherwise |
 | `feature_record_id` | integer, nullable | The related Check, Rewrite, or Prompt ID, where applicable |
 | `description` | string | Human-readable description, e.g. `"Content Check (API)"` |
-| `created_by` | integer, nullable | Only set on a transaction created manually by the Inkpolish team (e.g. credits granted to your account); `null` on anything generated automatically by your own usage or purchases |
+| `created_by` | integer, nullable | Set on a transaction created by the Inkpolish team (e.g. credits granted to your account); `null` on anything generated automatically by your own usage |
 | `created_at` | string | |
 | `updated_at` | string | |
 
@@ -429,7 +432,7 @@ Every error response is JSON with an `error` code and a human-readable `message`
 ```json
 {
   "error": "insufficient_credit",
-  "message": "You don't have enough credits to complete this action. Please purchase more credits to continue."
+  "message": "You don't have enough credits to complete this action. Your credits refresh on 2026-10-29."
 }
 ```
 
@@ -438,7 +441,7 @@ Every error response is JSON with an `error` code and a human-readable `message`
 | `401` | `unauthenticated` | Missing, invalid, or revoked API token |
 | `402` | `insufficient_credit` | Not enough credits to complete the action — see below |
 | `403` | `subscription_required` | Individual account without an active subscription, on an action endpoint — subscribe to run actions via the API |
-| `403` | `forbidden` | This account type doesn't have API access |
+| `403` | `forbidden` | This account doesn't have API access |
 | `404` | `not_found` | Record not found, or it belongs to a different account — the response is identical either way, and you can only read your own records |
 | `422` | `validation_failed` or `invalid_content` | Invalid or missing request data |
 | `429` | `too_many_requests` | Rate limit exceeded (see [Rate Limits](#rate-limits)) |
@@ -468,7 +471,6 @@ The `message` tells you what to do next, depending on your account:
 | Account | `message` ends with |
 |---|---|
 | Individual | "Your credits refresh on {date}." — the end of your current billing cycle |
-| Agency | "Please purchase more credits to continue." |
 | Affiliate | "Please contact support." |
 
 Example (Individual):
