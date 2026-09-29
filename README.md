@@ -138,9 +138,10 @@ regardless of how often you call them — only within the rate limits above.
 
 Inkpolish has two credit models. Your account type decides which one you're on:
 
-- **Subscription credits (Individual accounts).** Your subscription includes a fixed allowance for
-  each billing cycle, shared between your dashboard and the API. It refreshes when your
-  subscription renews. Unused credits don't carry over, and there are no separate top-ups.
+- **Subscription credits (Individual accounts).** Your subscription includes 100 credits every
+  month (on monthly and yearly plans alike), shared between your dashboard and the API. The
+  allowance resets at the start of each monthly credit cycle. Unused credits don't carry over, and
+  there are no separate top-ups.
 - **Credit balance (Affiliate accounts).** An ongoing balance with no cycle, made up of the credits
   Inkpolish grants to your affiliate account. They never expire and are reported as
   `purchased_credits` (even though you don't pay for them). The balance also includes
@@ -337,7 +338,7 @@ Subscription credits (Individual accounts):
 }
 ```
 
-If there's no active billing cycle, the counts are `0` and both dates are `null`.
+If there's no active credit cycle, the counts are `0` and both dates are `null`.
 
 Credit balance (Affiliate accounts):
 
@@ -470,7 +471,7 @@ The `message` tells you what to do next, depending on your account:
 
 | Account | `message` ends with |
 |---|---|
-| Individual | "Your credits refresh on {date}." — the end of your current billing cycle |
+| Individual | "Your credits refresh on {date}." — the end of your current monthly credit cycle |
 | Affiliate | "Please contact support." |
 
 Example (Individual):
