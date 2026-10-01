@@ -471,7 +471,7 @@ The `message` tells you what to do next, depending on your account:
 
 | Account | `message` ends with |
 |---|---|
-| Individual | "Your credits refresh on {date}." — the end of your current monthly credit cycle |
+| Individual | "Your credits refresh on {date}." — the date your next monthly credit cycle starts |
 | Affiliate | "Please contact support." |
 
 Example (Individual):
